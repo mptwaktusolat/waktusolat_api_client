@@ -1,6 +1,6 @@
 # Waktu Solat API Client
 
-A Dart package for fetching prayer times from the Waktu Solat API (https://api.waktusolat.app). This package provides easy-to-use methods to retrieve prayer times for different zones in Malaysia and Singapore.
+A Dart package for fetching prayer times from the Waktu Solat API (https://api.waktusolat.app). This package provides easy-to-use methods to retrieve prayer times for different zones in Malaysia.
 
 ## Usage
 
@@ -11,7 +11,7 @@ import 'package:waktusolat_api_client/waktusolat_api_client.dart';
 
 void main() async {
   try {
-    // Get prayer times for Singapore (SGR01)
+    // Get prayer times for a zone in Malaysia (e.g., SGR01)
     final waktuSolat = await WaktuSolat.getWaktuSolatV2('SGR01');
 
     print('Zone: ${waktuSolat.zone}');
@@ -35,24 +35,6 @@ void main() async {
 }
 ```
 
-### Available Data
-
-The `WaktuSolatV2` object contains:
-
-- `zone`: JAKIM zone code (e.g., 'SGR01')
-- `year`: Year of the prayer times
-- `month`: Month name (e.g., 'JUN')
-- `monthNumber`: Month number (1-12)
-- `lastUpdated`: Last update timestamp (optional)
-- `prayers`: List of `Prayer` objects for each day
-
-Each `Prayer` object contains:
-
-- `day`: Day of the month
-- `hijri`: Hijri date object
-- Raw timestamps: `fajr`, `syuruk`, `dhuhr`, `asr`, `maghrib`, `isha`
-- Formatted times: `fajrTime`, `syurukTime`, `dhuhrTime`, `asrTime`, `maghribTime`, `ishaTime`
-
 ### Hijri Date Support
 
 The package includes full support for Hijri dates:
@@ -69,49 +51,19 @@ print(hijriDate.dMMM()); // "4 Zulhijjah"
 
 ### Zone Codes
 
-This package works with JAKIM zone codes. Some examples:
+This package works with JAKIM zone codes for Malaysia only. Some examples:
 
-- `SGR01` - Singapore
-- `JHR01` - Pulau Aur dan Pemanggil, Johor
-- `JHR02` - Johor Bahru, Kota Tinggi, Kulai, Mersing, Pontian, Seri Medan dan Timur
+- `JHR01` - Pulau Aur dan Pulau Pemanggil, Johor
+- `JHR02` - Johor Bahru, Kota Tinggi, Mersing, Kulai
 - `KUL01` - Kuala Lumpur, Putrajaya
-- `SGR01` - Seluruh Negeri Selangor, Kuala Lumpur dan Putrajaya
+- `SGR01` - Gombak, Petaling, Sepang, Hulu Langat, Hulu Selangor, Shah Alam, Selangor
+- `KDH01` - Kota Setar, Kubang Pasu, Pokok Sena (Daerah Kecil), Kedah
 
-For a complete list of zone codes, refer to the official JAKIM documentation.
+For a complete list of zone codes, refer to the [e-solat JAKIM](https://www.e-solat.gov.my/).
 
 ## API Reference
 
-### WaktuSolat.getWaktuSolatV2(String zoneCode)
-
-Fetches prayer times for the specified zone code.
-
-**Parameters:**
-
-- `zoneCode`: JAKIM zone code (e.g., 'SGR01')
-
-**Returns:**
-
-- `Future<WaktuSolatV2>`: Prayer times data for the current month
-
-**Throws:**
-
-- `Exception`: If the API request fails or returns invalid data
-
-## Error Handling
-
-The package includes comprehensive error handling:
-
-```dart
-try {
-  final waktuSolat = await WaktuSolat.getWaktuSolatV2('INVALID_CODE');
-} catch (e) {
-  if (e.toString().contains('Status code: 404')) {
-    print('Invalid zone code provided');
-  } else {
-    print('Network or parsing error: $e');
-  }
-}
-```
+See https://api.waktusolat.app/docs.
 
 ## Contributing
 
@@ -120,7 +72,3 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Acknowledgments
-
-- JAKIM
