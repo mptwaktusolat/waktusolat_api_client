@@ -7,8 +7,10 @@ class MptPrayerTime {
   final String hijri;
   final String date;
   final String day;
+  final String imsak;
   final String fajr;
   final String syuruk;
+  final String dhuha;
   final String dhuhr;
   final String asr;
   final String maghrib;
@@ -18,8 +20,10 @@ class MptPrayerTime {
     required this.hijri,
     required this.date,
     required this.day,
+    required this.imsak,
     required this.fajr,
     required this.syuruk,
+    required this.dhuha,
     required this.dhuhr,
     required this.asr,
     required this.maghrib,

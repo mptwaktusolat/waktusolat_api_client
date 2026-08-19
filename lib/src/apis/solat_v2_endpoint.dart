@@ -5,7 +5,8 @@ part 'solat_v2_endpoint.chopper.g.dart';
 
 @ChopperApi(baseUrl: '/v2/solat')
 abstract class SolatV2Endpoint extends ChopperService {
-  static SolatV2Endpoint create() => _$SolatV2Endpoint();
+  static SolatV2Endpoint create([ChopperClient? client]) =>
+      _$SolatV2Endpoint(client);
 
   @GET(path: '/{zone}')
   Future<Response<MPTWaktuSolatV2>> getPrayerTimeByZone(

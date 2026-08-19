@@ -1,4 +1,3 @@
-import 'package:waktusolat_api_client/src/extensions/prayer_time_extension.dart';
 import 'package:waktusolat_api_client/waktusolat_api_client.dart';
 
 void main() async {

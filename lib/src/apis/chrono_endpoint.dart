@@ -5,7 +5,8 @@ part 'chrono_endpoint.chopper.g.dart';
 
 @ChopperApi(baseUrl: '/chrono')
 abstract class ChronoEndpoint extends ChopperService {
-  static ChronoEndpoint create() => _$ChronoEndpoint();
+  static ChronoEndpoint create([ChopperClient? client]) =>
+      _$ChronoEndpoint(client);
 
   @GET()
   Future<Response<Chrono>> getChrono();

@@ -1,57 +1,47 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:chopper/chopper.dart';
+import 'package:waktusolat_api_client/src/models/chrono.dart';
 import 'package:waktusolat_api_client/src/models/mpt_solat_v1_day.dart';
+import 'package:waktusolat_api_client/src/models/mpt_solat_v1_month.dart';
 import 'package:waktusolat_api_client/src/models/mpt_zone.dart';
 import 'package:waktusolat_api_client/src/models/mpt_zone_by_gps.dart';
+import 'package:waktusolat_api_client/src/waktusolat_api.dart';
 import 'models/mpt_waktu_solat_v2.dart';
 
-/// Main API client for Waktu Solat API
+/// Main API client for Waktu Solat API.
 class WaktuSolat {
-  static const String _baseUrl = 'https://api.waktusolat.app';
+  WaktuSolat._();
+
+  static WaktuSolatApi? _api;
+
+  static WaktuSolatApi get api => _api ??= WaktuSolatApi();
+
+  static set api(WaktuSolatApi value) => _api = value;
 
   /// Get prayer times for a specific zone (Version 2)
   ///
-  /// [zoneCode] - The JAKIM zone code (e.g., 'SGR01')
+  /// [zoneCode] The JAKIM zone code (e.g., 'SGR01')
   ///
   /// Returns [MPTWaktuSolatV2] object containing prayer times data
   static Future<MPTWaktuSolatV2> getWaktuSolatV2(
     String zoneCode, {
     int? year,
     int? month,
-  }) async {
-    var date = DateTime(
-      year ?? DateTime.now().year,
-      month ?? DateTime.now().month,
+  }) {
+    final date = _monthOf(year, month);
+
+    return _call(
+      () => api.solatV2.getPrayerTimeByZone(
+        zoneCode,
+        year: date.year,
+        month: date.month,
+      ),
+      'prayer times',
     );
-
-    final queryParams = {
-      'year': date.year.toString(),
-      'month': date.month.toString(),
-    };
-
-    final url = Uri.parse(
-      '$_baseUrl/v2/solat/$zoneCode',
-    ).replace(queryParameters: queryParams);
-
-    try {
-      final response = await http.get(url);
-
-      if (response.statusCode == 200) {
-        final jsonData = json.decode(response.body) as Map<String, dynamic>;
-        return MPTWaktuSolatV2.fromJson(jsonData);
-      } else {
-        throw Exception(
-          'Failed to load prayer times. Status code: ${response.statusCode}',
-        );
-      }
-    } catch (e) {
-      throw Exception('Error fetching prayer times: $e');
-    }
   }
 
   /// Get prayer times for a given coordinates (Version 2)
   ///
-  /// [zoneCode] - The JAKIM zone code (e.g., 'SGR01')
+  /// [latitude], [longitude] - The coordinates to look up
   ///
   /// Returns [MPTWaktuSolatV2] object containing prayer times data
   static Future<MPTWaktuSolatV2> getWaktuSolatV2ByCoordinates(
@@ -59,77 +49,46 @@ class WaktuSolat {
     double longitude, {
     int? year,
     int? month,
-  }) async {
-    var date = DateTime(
-      year ?? DateTime.now().year,
-      month ?? DateTime.now().month,
+  }) {
+    final date = _monthOf(year, month);
+
+    return _call(
+      () => api.solatV2.getPrayerTimeByGps(
+        latitude,
+        longitude,
+        year: date.year,
+        month: date.month,
+      ),
+      'prayer times',
     );
-
-    final queryParams = {
-      'year': date.year.toString(),
-      'month': date.month.toString(),
-    };
-
-    final url = Uri.parse(
-      '$_baseUrl/v2/solat/$latitude/$longitude',
-    ).replace(queryParameters: queryParams);
-
-    try {
-      final response = await http.get(url);
-
-      if (response.statusCode == 200) {
-        final jsonData = json.decode(response.body) as Map<String, dynamic>;
-        return MPTWaktuSolatV2.fromJson(jsonData);
-      } else {
-        throw Exception(
-          'Failed to load prayer times. Status code: ${response.statusCode}',
-        );
-      }
-    } catch (e) {
-      throw Exception('Error fetching prayer times: $e');
-    }
   }
 
   /// Get prayer times for a specific zone (Version 1)
   ///
   /// [zoneCode] - The JAKIM zone code (e.g., 'SGR01')
   ///
-  /// Returns [MPTWaktuSolatV2] object containing prayer times data
-  static Future<MPTWaktuSolatV2> getWaktuSolatV1(
+  /// Returns [MptSolatV1Month] object containing prayer times data
+  static Future<MptSolatV1Month> getWaktuSolatV1(
     String zoneCode, {
     int? year,
     int? month,
-  }) async {
-    var date = DateTime(
-      year ?? DateTime.now().year,
-      month ?? DateTime.now().month,
+  }) {
+    final date = _monthOf(year, month);
+
+    return _call(
+      () => api.solatV1.getMonthlyPrayerTime(
+        zoneCode,
+        year: date.year,
+        month: date.month,
+      ),
+      'prayer times',
     );
-
-    final queryParams = {'year': date.year, 'month': date.month};
-
-    final url = Uri.parse(
-      '$_baseUrl/solat/$zoneCode',
-    ).replace(queryParameters: queryParams);
-
-    try {
-      final response = await http.get(url);
-
-      if (response.statusCode == 200) {
-        final jsonData = json.decode(response.body) as Map<String, dynamic>;
-        return MPTWaktuSolatV2.fromJson(jsonData);
-      } else {
-        throw Exception(
-          'Failed to load prayer times. Status code: ${response.statusCode}',
-        );
-      }
-    } catch (e) {
-      throw Exception('Error fetching prayer times: $e');
-    }
   }
 
-  /// Get prayer times for a specific zone (Version 1)
+  /// Get prayer times for a single day of a specific zone (Version 1)
   ///
   /// [zoneCode] - The JAKIM zone code (e.g., 'SGR01')
+  /// [dayOfMonth] - The day of the month to look up
   ///
   /// Returns [MptSolatV1Day] object containing prayer times data
   static Future<MptSolatV1Day> getWaktuSolatV1ByDay(
@@ -137,104 +96,50 @@ class WaktuSolat {
     int dayOfMonth, {
     int? year,
     int? month,
-  }) async {
-    var date = DateTime(
-      year ?? DateTime.now().year,
-      month ?? DateTime.now().month,
+  }) {
+    final date = _monthOf(year, month);
+
+    return _call(
+      () => api.solatV1.getDailyPrayerTime(
+        zoneCode,
+        dayOfMonth,
+        year: date.year,
+        month: date.month,
+      ),
+      'prayer times',
     );
-
-    final queryParams = {'year': date.year, 'month': date.month};
-
-    final url = Uri.parse(
-      '$_baseUrl/solat/$zoneCode/$dayOfMonth',
-    ).replace(queryParameters: queryParams);
-
-    try {
-      final response = await http.get(url);
-
-      if (response.statusCode == 200) {
-        final jsonData = json.decode(response.body) as Map<String, dynamic>;
-        return MptSolatV1Day.fromJson(jsonData);
-      } else {
-        throw Exception(
-          'Failed to load prayer times. Status code: ${response.statusCode}',
-        );
-      }
-    } catch (e) {
-      throw Exception('Error fetching prayer times: $e');
-    }
   }
 
   /// Get all available prayer time zones from the server
   ///
-  /// Returns a [MptZone] object containing zone data
-  static Future<List<MptZone>> getAllZones() async {
-    final url = Uri.parse('$_baseUrl/zones');
-
-    try {
-      final response = await http.get(url);
-
-      if (response.statusCode == 200) {
-        final jsonData = json.decode(response.body);
-        return MptZone.fromList(jsonData);
-      } else {
-        throw Exception(
-          'Failed to load zones data. Status code: ${response.statusCode}',
-        );
-      }
-    } catch (e) {
-      throw Exception('Error fetching zones data: $e');
-    }
-  }
+  /// Returns a list of [MptZone] objects containing zone data
+  static Future<List<MptZone>> getAllZones() =>
+      _call(() => api.zones.getAllZones(), 'zones data');
 
   /// Get all zones for the current state
   ///
   /// [state] - The JAKIM zone code for the state (e.g., 'PRK'). Only the name, can omit the number.
   ///
   /// Returns a list of [MptZone] objects containing zone data
-  static Future<List<MptZone>> getZoneByState(String state) async {
-    final url = Uri.parse('$_baseUrl/zones/$state');
+  static Future<List<MptZone>> getZoneByState(String state) =>
+      _call(() => api.zones.getZonesByState(state), 'zones data');
 
-    try {
-      final response = await http.get(url);
-
-      if (response.statusCode == 200) {
-        final jsonData = json.decode(response.body);
-        return MptZone.fromList(jsonData);
-      } else {
-        throw Exception(
-          'Failed to load zones data. Status code: ${response.statusCode}',
-        );
-      }
-    } catch (e) {
-      throw Exception('Error fetching zones data: $e');
-    }
-  }
-
-  /// Get all zones for the current state
+  /// Get the zone covering a given coordinates
   ///
-  /// Returns a list of [MptZone] objects containing zone data
+  /// Returns a [MptZoneByGPS] object containing zone data
   static Future<MptZoneByGPS> getZoneByCoordinates(
     double latitude,
     double longitude,
-  ) async {
-    final url = Uri.parse('$_baseUrl/zones/$latitude/$longitude');
+  ) => _call(
+    () => api.zones.getZonesByGps(latitude, longitude),
+    'zones data',
+  );
 
-    try {
-      final response = await http.get(url);
-
-      if (response.statusCode == 200) {
-        final jsonData = json.decode(response.body);
-        return MptZoneByGPS.fromJson(jsonData);
-      } else {
-        throw Exception(
-          'Failed to load zones data. Status code: ${response.statusCode}',
-        );
-      }
-    } catch (e) {
-      throw Exception('Error fetching zones data: $e');
-    }
-  }
+  /// Get the current date and time as reported by the server
+  ///
+  /// Returns a [Chrono] object containing the server's date and time
+  static Future<Chrono> getChrono() =>
+      _call(() => api.chrono.getChrono(), 'server time');
 
   /// Generates the download URL for the Jadual Solat (prayer timetable) PDF for a specific [zoneCode].
   ///
@@ -247,20 +152,45 @@ class WaktuSolat {
     int? year,
     int? month,
   }) {
-    var date = DateTime(
-      year ?? DateTime.now().year,
-      month ?? DateTime.now().month,
-    );
+    final date = _monthOf(year, month);
 
-    final queryParams = {
-      'year': date.year.toString(),
-      'month': date.month.toString(),
-    };
+    return WaktuSolatApi.defaultBaseUrl
+        .replace(
+          path: '/jadual_solat/$zoneCode',
+          queryParameters: {
+            'year': date.year.toString(),
+            'month': date.month.toString(),
+          },
+        )
+        .toString();
+  }
 
-    final url = Uri.parse(
-      '$_baseUrl/jadual_solat/$zoneCode',
-    ).replace(queryParameters: queryParams);
+  /// The [year]/[month] pair to query, falling back to the current month.
+  static DateTime _monthOf(int? year, int? month) => DateTime(
+    year ?? DateTime.now().year,
+    month ?? DateTime.now().month,
+  );
 
-    return url.toString();
+  /// Runs [request] and returns its body, translating both HTTP failures and
+  /// transport errors into an [Exception] describing [what] failed.
+  static Future<T> _call<T>(
+    Future<Response<T>> Function() request,
+    String what,
+  ) async {
+    final Response<T> response;
+    try {
+      response = await request();
+    } catch (e) {
+      throw Exception('Error fetching $what: $e');
+    }
+
+    final body = response.body;
+    if (!response.isSuccessful || body == null) {
+      throw Exception(
+        'Failed to load $what. Status code: ${response.statusCode}',
+      );
+    }
+
+    return body;
   }
 }

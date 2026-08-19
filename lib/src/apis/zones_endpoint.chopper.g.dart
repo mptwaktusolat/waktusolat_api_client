@@ -19,17 +19,17 @@ final class _$ZonesEndpoint extends ZonesEndpoint {
   final Type definitionType = ZonesEndpoint;
 
   @override
-  Future<Response<MptZones>> getAllZones() {
+  Future<Response<List<MptZone>>> getAllZones() {
     final Uri $url = Uri.parse('/zones');
     final Request $request = Request('GET', $url, client.baseUrl);
-    return client.send<MptZones, MptZones>($request);
+    return client.send<List<MptZone>, MptZone>($request);
   }
 
   @override
-  Future<Response<MptZones>> getZonesByState(String state) {
+  Future<Response<List<MptZone>>> getZonesByState(String state) {
     final Uri $url = Uri.parse('/zones/${state}');
     final Request $request = Request('GET', $url, client.baseUrl);
-    return client.send<MptZones, MptZones>($request);
+    return client.send<List<MptZone>, MptZone>($request);
   }
 
   @override

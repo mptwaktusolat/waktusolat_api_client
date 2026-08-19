@@ -5,7 +5,9 @@ part 'chrono.g.dart';
 @JsonSerializable()
 class Chrono {
   final String date;
+  @JsonKey(name: 'day_of_month')
   final int dayOfMonth;
+  @JsonKey(name: 'day_of_week')
   final int dayOfWeek;
   final String time12;
   final String time24;

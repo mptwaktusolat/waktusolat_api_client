@@ -8,8 +8,8 @@ part of 'chrono.dart';
 
 Chrono _$ChronoFromJson(Map<String, dynamic> json) => Chrono(
   date: json['date'] as String,
-  dayOfMonth: (json['dayOfMonth'] as num).toInt(),
-  dayOfWeek: (json['dayOfWeek'] as num).toInt(),
+  dayOfMonth: (json['day_of_month'] as num).toInt(),
+  dayOfWeek: (json['day_of_week'] as num).toInt(),
   time12: json['time12'] as String,
   time24: json['time24'] as String,
   unix: (json['unix'] as num).toInt(),
@@ -19,8 +19,8 @@ Chrono _$ChronoFromJson(Map<String, dynamic> json) => Chrono(
 
 Map<String, dynamic> _$ChronoToJson(Chrono instance) => <String, dynamic>{
   'date': instance.date,
-  'dayOfMonth': instance.dayOfMonth,
-  'dayOfWeek': instance.dayOfWeek,
+  'day_of_month': instance.dayOfMonth,
+  'day_of_week': instance.dayOfWeek,
   'time12': instance.time12,
   'time24': instance.time24,
   'unix': instance.unix,

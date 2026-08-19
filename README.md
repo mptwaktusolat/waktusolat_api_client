@@ -22,12 +22,14 @@ void main() async {
     final firstDay = waktuSolat.prayers.first;
     print('Day ${firstDay.day} prayer times:');
     print('Hijri Date: ${firstDay.hijri}');
-    print('Fajr: ${firstDay.fajrTime}');
-    print('Syuruk: ${firstDay.syurukTime}');
-    print('Dhuhr: ${firstDay.dhuhrTime}');
-    print('Asr: ${firstDay.asrTime}');
-    print('Maghrib: ${firstDay.maghribTime}');
-    print('Isha: ${firstDay.ishaTime}');
+    print('Imsak: ${firstDay.imsak}');
+    print('Fajr: ${firstDay.fajr}');
+    print('Syuruk: ${firstDay.syuruk}');
+    print('Dhuha: ${firstDay.dhuha}');
+    print('Dhuhr: ${firstDay.dhuhr}');
+    print('Asr: ${firstDay.asr}');
+    print('Maghrib: ${firstDay.maghrib}');
+    print('Isha: ${firstDay.isha}');
 
   } catch (e) {
     print('Error: $e');

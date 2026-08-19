@@ -39,7 +39,7 @@ final class _$SolatV1Endpoint extends SolatV1Endpoint {
   }
 
   @override
-  Future<Response<MptSolatV1Month>> getDailyPrayerTime(
+  Future<Response<MptSolatV1Day>> getDailyPrayerTime(
     String zone,
     int day, {
     int? year,
@@ -56,6 +56,6 @@ final class _$SolatV1Endpoint extends SolatV1Endpoint {
       client.baseUrl,
       parameters: $params,
     );
-    return client.send<MptSolatV1Month, MptSolatV1Month>($request);
+    return client.send<MptSolatV1Day, MptSolatV1Day>($request);
   }
 }
