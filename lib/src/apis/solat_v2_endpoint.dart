@@ -9,14 +9,14 @@ abstract class SolatV2Endpoint extends ChopperService {
       _$SolatV2Endpoint(client);
 
   @GET(path: '/{zone}')
-  Future<Response<MPTWaktuSolatV2>> getPrayerTimeByZone(
+  Future<MPTWaktuSolatV2> getPrayerTimeByZone(
     @Path() String zone, {
     @Query() int? year,
     @Query() int? month,
   });
 
   @GET(path: '/{lat}/{long}')
-  Future<Response<MPTWaktuSolatV2>> getPrayerTimeByGps(
+  Future<MPTWaktuSolatV2> getPrayerTimeByGps(
     @Path() double lat,
     @Path() double long, {
     @Query() int? year,

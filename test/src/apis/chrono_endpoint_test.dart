@@ -23,12 +23,10 @@ void main() {
       final requests = <http.Request>[];
       final api = mockApi(jsonResponse(_chronoJson, captured: requests));
 
-      final response = await api.chrono.getChrono();
+      final chrono = await api.chrono.getChrono();
 
       expect(requests.single.url.path, '/chrono');
-      expect(response.body, isA<Chrono>());
-
-      final chrono = response.body!;
+      expect(chrono, isA<Chrono>());
       expect(chrono.dayOfMonth, 18);
       expect(chrono.dayOfWeek, 2);
       expect(chrono.time24, '21:31:27');

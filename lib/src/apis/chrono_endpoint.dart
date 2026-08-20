@@ -9,5 +9,5 @@ abstract class ChronoEndpoint extends ChopperService {
       _$ChronoEndpoint(client);
 
   @GET()
-  Future<Response<Chrono>> getChrono();
+  Future<Chrono> getChrono();
 }

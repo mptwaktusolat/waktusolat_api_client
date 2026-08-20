@@ -24,7 +24,7 @@ void main() {
       final requests = <http.Request>[];
       final api = mockApi(jsonResponse(_monthJson, captured: requests));
 
-      final response = await api.solatV1.getMonthlyPrayerTime(
+      final month = await api.solatV1.getMonthlyPrayerTime(
         'SGR01',
         year: 2026,
         month: 8,
@@ -34,20 +34,29 @@ void main() {
       expect(request.url.path, '/solat/SGR01');
       expect(request.url.queryParameters, {'year': '2026', 'month': '8'});
 
-      expect(response.body, isA<MptSolatV1Month>());
-      expect(response.body!.prayerTimes, hasLength(1));
-      expect(response.body!.zone, 'SGR01');
+      expect(month, isA<MptSolatV1Month>());
+      expect(month.prayerTimes, hasLength(1));
+      expect(month.zone, 'SGR01');
+    });
+
+    test('getMonthlyPrayerTime omits year and month when not given', () async {
+      final requests = <http.Request>[];
+      final api = mockApi(jsonResponse(_monthJson, captured: requests));
+
+      await api.solatV1.getMonthlyPrayerTime('SGR01');
+
+      expect(requests.single.url.queryParameters, isEmpty);
     });
 
     test('getDailyPrayerTime decodes a single prayer time', () async {
       final requests = <http.Request>[];
       final api = mockApi(jsonResponse(_dayJson, captured: requests));
 
-      final response = await api.solatV1.getDailyPrayerTime('SGR01', 1);
+      final day = await api.solatV1.getDailyPrayerTime('SGR01', 1);
 
       expect(requests.single.url.path, '/solat/SGR01/1');
-      expect(response.body, isA<MptSolatV1Day>());
-      expect(response.body!.periodType, 'day');
+      expect(day, isA<MptSolatV1Day>());
+      expect(day.periodType, 'day');
     });
 
     test('prayer times carry the API imsak and dhuha values', () async {
@@ -56,7 +65,7 @@ void main() {
       final prayerTime = (await api.solatV1.getDailyPrayerTime(
         'SGR01',
         1,
-      )).body!.prayerTimes;
+      )).prayerTimes;
 
       expect(prayerTime.imsak, '05:51:00');
       expect(prayerTime.dhuha, '07:36:00');

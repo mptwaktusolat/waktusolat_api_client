@@ -1,11 +1,13 @@
 /// A Dart client for the Waktu Solat API (https://api.waktusolat.app).
 library;
 
-export 'src/waktusolat_api_client_base.dart';
 export 'src/waktusolat_api.dart';
+
+export 'package:chopper/chopper.dart' show ChopperClient, ChopperHttpException;
 
 // Endpoints
 export 'src/apis/chrono_endpoint.dart';
+export 'src/apis/jadual_solat_endpoint.dart';
 export 'src/apis/solat_v1_endpoint.dart';
 export 'src/apis/solat_v2_endpoint.dart';
 export 'src/apis/zones_endpoint.dart';

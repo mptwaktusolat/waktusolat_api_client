@@ -19,9 +19,10 @@ final class _$ChronoEndpoint extends ChronoEndpoint {
   final Type definitionType = ChronoEndpoint;
 
   @override
-  Future<Response<Chrono>> getChrono() {
+  Future<Chrono> getChrono() async {
     final Uri $url = Uri.parse('/chrono');
     final Request $request = Request('GET', $url, client.baseUrl);
-    return client.send<Chrono, Chrono>($request);
+    final Response $response = await client.send<Chrono, Chrono>($request);
+    return $response.bodyOrThrow;
   }
 }

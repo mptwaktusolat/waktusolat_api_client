@@ -19,23 +19,32 @@ final class _$ZonesEndpoint extends ZonesEndpoint {
   final Type definitionType = ZonesEndpoint;
 
   @override
-  Future<Response<List<MptZone>>> getAllZones() {
+  Future<List<MptZone>> getAllZones() async {
     final Uri $url = Uri.parse('/zones');
     final Request $request = Request('GET', $url, client.baseUrl);
-    return client.send<List<MptZone>, MptZone>($request);
+    final Response $response = await client.send<List<MptZone>, MptZone>(
+      $request,
+    );
+    return $response.bodyOrThrow;
   }
 
   @override
-  Future<Response<List<MptZone>>> getZonesByState(String state) {
+  Future<List<MptZone>> getZonesByState(String state) async {
     final Uri $url = Uri.parse('/zones/${state}');
     final Request $request = Request('GET', $url, client.baseUrl);
-    return client.send<List<MptZone>, MptZone>($request);
+    final Response $response = await client.send<List<MptZone>, MptZone>(
+      $request,
+    );
+    return $response.bodyOrThrow;
   }
 
   @override
-  Future<Response<MptZoneByGPS>> getZonesByGps(double lat, double long) {
+  Future<MptZoneByGPS> getZonesByGps(double lat, double long) async {
     final Uri $url = Uri.parse('/zones/${lat}/${long}');
     final Request $request = Request('GET', $url, client.baseUrl);
-    return client.send<MptZoneByGPS, MptZoneByGPS>($request);
+    final Response $response = await client.send<MptZoneByGPS, MptZoneByGPS>(
+      $request,
+    );
+    return $response.bodyOrThrow;
   }
 }

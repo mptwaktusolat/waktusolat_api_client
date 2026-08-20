@@ -1,4 +1,3 @@
-import 'package:chopper/chopper.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:waktusolat_api_client/waktusolat_api_client.dart';
@@ -11,7 +10,7 @@ WaktuSolatApi mockApi(MockClientHandler handler) => WaktuSolatApi.withClient(
     baseUrl: WaktuSolatApi.defaultBaseUrl,
     client: MockClient(handler),
     converter: WaktuSolatApi.converter,
-    errorConverter: const JsonConverter(),
+    errorConverter: WaktuSolatApi.errorConverter,
     services: WaktuSolatApi.createServices(),
   ),
 );
@@ -29,5 +28,25 @@ MockClientHandler jsonResponse(
     body,
     statusCode,
     headers: {'content-type': 'application/json'},
+  );
+};
+
+/// Answers every request with raw [bytes] under [contentType], recording the
+/// request that was made in [captured].
+///
+/// Used for the PDF endpoint, whose body must survive untouched by any JSON
+/// decoding.
+MockClientHandler bytesResponse(
+  List<int> bytes, {
+  int statusCode = 200,
+  String contentType = 'application/pdf',
+  List<http.Request>? captured,
+}) => (request) async {
+  captured?.add(request);
+
+  return http.Response.bytes(
+    bytes,
+    statusCode,
+    headers: {'content-type': contentType},
   );
 };

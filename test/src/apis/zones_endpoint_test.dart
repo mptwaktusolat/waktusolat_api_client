@@ -19,35 +19,34 @@ void main() {
       final requests = <http.Request>[];
       final api = mockApi(jsonResponse(_zonesJson, captured: requests));
 
-      final response = await api.zones.getAllZones();
+      final zones = await api.zones.getAllZones();
 
       expect(requests.single.url.path, '/zones');
-      expect(response.isSuccessful, isTrue);
-      expect(response.body, isA<List<MptZone>>());
-      expect(response.body!.map((z) => z.jakimCode), ['PRK01', 'PRK02']);
-      expect(response.body!.first.negeri, 'Perak');
+      expect(zones, isA<List<MptZone>>());
+      expect(zones.map((z) => z.jakimCode), ['PRK01', 'PRK02']);
+      expect(zones.first.negeri, 'Perak');
     });
 
     test('getZonesByState puts the state in the path', () async {
       final requests = <http.Request>[];
       final api = mockApi(jsonResponse(_zonesJson, captured: requests));
 
-      final response = await api.zones.getZonesByState('PRK');
+      final zones = await api.zones.getZonesByState('PRK');
 
       expect(requests.single.url.path, '/zones/PRK');
-      expect(response.body, hasLength(2));
+      expect(zones, hasLength(2));
     });
 
     test('getZonesByGps decodes a single object', () async {
       final requests = <http.Request>[];
       final api = mockApi(jsonResponse(_zoneByGpsJson, captured: requests));
 
-      final response = await api.zones.getZonesByGps(3.1, 101.6);
+      final zone = await api.zones.getZonesByGps(3.1, 101.6);
 
       expect(requests.single.url.path, '/zones/3.1/101.6');
-      expect(response.body, isA<MptZoneByGPS>());
-      expect(response.body!.zone, 'SGR01');
-      expect(response.body!.district, 'Petaling');
+      expect(zone, isA<MptZoneByGPS>());
+      expect(zone.zone, 'SGR01');
+      expect(zone.district, 'Petaling');
     });
   });
 }

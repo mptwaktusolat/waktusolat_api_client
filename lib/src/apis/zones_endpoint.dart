@@ -10,13 +10,13 @@ abstract class ZonesEndpoint extends ChopperService {
       _$ZonesEndpoint(client);
 
   @GET()
-  Future<Response<List<MptZone>>> getAllZones();
+  Future<List<MptZone>> getAllZones();
 
   @GET(path: '/{state}')
-  Future<Response<List<MptZone>>> getZonesByState(@Path() String state);
+  Future<List<MptZone>> getZonesByState(@Path() String state);
 
   @GET(path: '/{lat}/{long}')
-  Future<Response<MptZoneByGPS>> getZonesByGps(
+  Future<MptZoneByGPS> getZonesByGps(
     @Path() double lat,
     @Path() double long,
   );

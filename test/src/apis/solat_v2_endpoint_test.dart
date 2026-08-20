@@ -17,7 +17,7 @@ void main() {
       final requests = <http.Request>[];
       final api = mockApi(jsonResponse(_waktuSolatJson, captured: requests));
 
-      final response = await api.solatV2.getPrayerTimeByZone(
+      final solat = await api.solatV2.getPrayerTimeByZone(
         'SGR01',
         year: 2026,
         month: 8,
@@ -27,11 +27,11 @@ void main() {
       expect(request.url.path, '/v2/solat/SGR01');
       expect(request.url.queryParameters, {'year': '2026', 'month': '8'});
 
-      expect(response.body, isA<MPTWaktuSolatV2>());
-      expect(response.body!.monthNumber, 8);
-      expect(response.body!.lastUpdated, isNull);
+      expect(solat, isA<MPTWaktuSolatV2>());
+      expect(solat.monthNumber, 8);
+      expect(solat.lastUpdated, isNull);
 
-      final prayer = response.body!.prayers.single;
+      final prayer = solat.prayers.single;
       expect(prayer.day, 1);
       expect(prayer.hijri, isA<HijriDate>());
       expect(
@@ -40,12 +40,23 @@ void main() {
       );
     });
 
+    test('getPrayerTimeByZone omits year and month when not given', () async {
+      final requests = <http.Request>[];
+      final api = mockApi(jsonResponse(_waktuSolatJson, captured: requests));
+
+      await api.solatV2.getPrayerTimeByZone('SGR01');
+
+      // The API defaults to the current month server-side, so the client no
+      // longer fills these in.
+      expect(requests.single.url.queryParameters, isEmpty);
+    });
+
     test('imsak and dhuha come from the API, not from an offset', () async {
       final api = mockApi(jsonResponse(_waktuSolatJson));
 
       final prayer = (await api.solatV2.getPrayerTimeByZone(
         'SGR01',
-      )).body!.prayers.single;
+      )).prayers.single;
 
       expect(
         prayer.imsak,
@@ -71,6 +82,23 @@ void main() {
       await api.solatV2.getPrayerTimeByGps(3.1, 101.6);
 
       expect(requests.single.url.path, '/v2/solat/3.1/101.6');
+    });
+
+    test('an unsuccessful response throws ChopperHttpException', () async {
+      final api = mockApi(
+        jsonResponse('{"message":"not found"}', statusCode: 404),
+      );
+
+      await expectLater(
+        api.solatV2.getPrayerTimeByZone('INVALID'),
+        throwsA(
+          isA<ChopperHttpException>().having(
+            (e) => e.response.statusCode,
+            'statusCode',
+            404,
+          ),
+        ),
+      );
     });
   });
 }

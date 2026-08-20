@@ -19,11 +19,11 @@ final class _$SolatV2Endpoint extends SolatV2Endpoint {
   final Type definitionType = SolatV2Endpoint;
 
   @override
-  Future<Response<MPTWaktuSolatV2>> getPrayerTimeByZone(
+  Future<MPTWaktuSolatV2> getPrayerTimeByZone(
     String zone, {
     int? year,
     int? month,
-  }) {
+  }) async {
     final Uri $url = Uri.parse('/v2/solat/${zone}');
     final Map<String, dynamic> $params = <String, dynamic>{
       'year': year,
@@ -35,16 +35,18 @@ final class _$SolatV2Endpoint extends SolatV2Endpoint {
       client.baseUrl,
       parameters: $params,
     );
-    return client.send<MPTWaktuSolatV2, MPTWaktuSolatV2>($request);
+    final Response $response = await client
+        .send<MPTWaktuSolatV2, MPTWaktuSolatV2>($request);
+    return $response.bodyOrThrow;
   }
 
   @override
-  Future<Response<MPTWaktuSolatV2>> getPrayerTimeByGps(
+  Future<MPTWaktuSolatV2> getPrayerTimeByGps(
     double lat,
     double long, {
     int? year,
     int? month,
-  }) {
+  }) async {
     final Uri $url = Uri.parse('/v2/solat/${lat}/${long}');
     final Map<String, dynamic> $params = <String, dynamic>{
       'year': year,
@@ -56,6 +58,8 @@ final class _$SolatV2Endpoint extends SolatV2Endpoint {
       client.baseUrl,
       parameters: $params,
     );
-    return client.send<MPTWaktuSolatV2, MPTWaktuSolatV2>($request);
+    final Response $response = await client
+        .send<MPTWaktuSolatV2, MPTWaktuSolatV2>($request);
+    return $response.bodyOrThrow;
   }
 }

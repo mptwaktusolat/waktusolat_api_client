@@ -19,11 +19,11 @@ final class _$SolatV1Endpoint extends SolatV1Endpoint {
   final Type definitionType = SolatV1Endpoint;
 
   @override
-  Future<Response<MptSolatV1Month>> getMonthlyPrayerTime(
+  Future<MptSolatV1Month> getMonthlyPrayerTime(
     String zone, {
     int? year,
     int? month,
-  }) {
+  }) async {
     final Uri $url = Uri.parse('/solat/${zone}');
     final Map<String, dynamic> $params = <String, dynamic>{
       'year': year,
@@ -35,16 +35,18 @@ final class _$SolatV1Endpoint extends SolatV1Endpoint {
       client.baseUrl,
       parameters: $params,
     );
-    return client.send<MptSolatV1Month, MptSolatV1Month>($request);
+    final Response $response = await client
+        .send<MptSolatV1Month, MptSolatV1Month>($request);
+    return $response.bodyOrThrow;
   }
 
   @override
-  Future<Response<MptSolatV1Day>> getDailyPrayerTime(
+  Future<MptSolatV1Day> getDailyPrayerTime(
     String zone,
     int day, {
     int? year,
     int? month,
-  }) {
+  }) async {
     final Uri $url = Uri.parse('/solat/${zone}/${day}');
     final Map<String, dynamic> $params = <String, dynamic>{
       'year': year,
@@ -56,6 +58,9 @@ final class _$SolatV1Endpoint extends SolatV1Endpoint {
       client.baseUrl,
       parameters: $params,
     );
-    return client.send<MptSolatV1Day, MptSolatV1Day>($request);
+    final Response $response = await client.send<MptSolatV1Day, MptSolatV1Day>(
+      $request,
+    );
+    return $response.bodyOrThrow;
   }
 }
