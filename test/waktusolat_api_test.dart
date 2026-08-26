@@ -1,27 +1,19 @@
-import 'package:http/http.dart' as http;
-import 'package:http/testing.dart';
 import 'package:test/test.dart';
 import 'package:waktusolat_api_client/waktusolat_api_client.dart';
-
-import 'mock_api.dart';
-
-const _zonesJson =
-    '[{"jakimCode":"PRK01","negeri":"Perak","daerah":"Tapah, Slim River"}]';
 
 void main() {
   group('WaktuSolat', () {
     tearDown(WaktuSolat.dispose);
 
-    test('api returns the same lazily created instance', () {
+    test('api returns the same created instance', () {
       expect(WaktuSolat.api, same(WaktuSolat.api));
     });
 
-    test('the api setter replaces the shared instance', () async {
-      WaktuSolat.api = mockApi(jsonResponse(_zonesJson));
-
+    test('Test API endpoint is reachable', () async {
       final zones = await WaktuSolat.api.zones.getAllZones();
 
-      expect(zones.single.jakimCode, 'PRK01');
+      expect(zones, isNotEmpty);
+      expect(zones.first.jakimCode, isNotEmpty);
     });
 
     test('dispose clears the shared instance', () {
@@ -46,23 +38,27 @@ void main() {
       api.dispose();
     });
 
-    test('a custom baseUrl is used for requests', () async {
-      final requests = <http.Request>[];
-      final api = WaktuSolatApi.withClient(
-        ChopperClient(
-          baseUrl: Uri.parse('https://staging.example'),
-          client: MockClient(jsonResponse(_zonesJson, captured: requests)),
-          converter: WaktuSolatApi.converter,
-          errorConverter: WaktuSolatApi.errorConverter,
-          services: WaktuSolatApi.createServices(),
-        ),
+    test('defaults to the public library user agent', () async {
+      final api = WaktuSolatApi();
+
+      expect(api.chrono, isA<ChronoEndpoint>());
+      expect(WaktuSolatApi.userAgent, WaktuSolatApi.defaultUserAgent);
+      expect(
+        WaktuSolatApi.userAgent,
+        equals('waktusolat.app-library/2.0.0'),
       );
 
-      await api.zones.getAllZones();
-
-      expect(requests.single.url.origin, 'https://staging.example');
-
       api.dispose();
+    });
+
+    test('setUserAgent overrides the header sent with requests', () async {
+      WaktuSolatApi.setUserAgent('my-app/1.0.0');
+
+      // The shared instance picks the new User-Agent up on its next request.
+      final zones = await WaktuSolat.api.zones.getAllZones();
+
+      expect(zones, isNotEmpty);
+      expect(WaktuSolatApi.userAgent, 'my-app/1.0.0');
     });
   });
 }

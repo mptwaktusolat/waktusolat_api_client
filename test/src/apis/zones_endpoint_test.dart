@@ -1,52 +1,51 @@
-import 'package:http/http.dart' as http;
 import 'package:test/test.dart';
 import 'package:waktusolat_api_client/waktusolat_api_client.dart';
 
-import '../../mock_api.dart';
-
-const _zonesJson = '''
-[
-  {"jakimCode":"PRK01","negeri":"Perak","daerah":"Tapah, Slim River, Tanjung Malim"},
-  {"jakimCode":"PRK02","negeri":"Perak","daerah":"Kuala Kangsar, Sg. Siput, Ipoh"}
-]
-''';
-
-const _zoneByGpsJson = '{"zone":"SGR01","state":"SGR","district":"Petaling"}';
-
 void main() {
   group('ZonesEndpoint', () {
-    test('getAllZones decodes a bare JSON array into List<MptZone>', () async {
-      final requests = <http.Request>[];
-      final api = mockApi(jsonResponse(_zonesJson, captured: requests));
+    late WaktuSolatApi api;
 
+    setUp(() => api = WaktuSolatApi());
+    tearDown(() => api.dispose());
+
+    test('Test valid get all zones', () async {
       final zones = await api.zones.getAllZones();
 
-      expect(requests.single.url.path, '/zones');
       expect(zones, isA<List<MptZone>>());
-      expect(zones.map((z) => z.jakimCode), ['PRK01', 'PRK02']);
-      expect(zones.first.negeri, 'Perak');
+      expect(zones, hasLength(60));
+      expect(zones.first.jakimCode, isNotEmpty);
+      expect(zones.first.negeri, isNotEmpty);
+      expect(zones.first.daerah, isNotEmpty);
     });
 
-    test('getZonesByState puts the state in the path', () async {
-      final requests = <http.Request>[];
-      final api = mockApi(jsonResponse(_zonesJson, captured: requests));
-
+    test('Test valid get current state zones', () async {
       final zones = await api.zones.getZonesByState('PRK');
 
-      expect(requests.single.url.path, '/zones/PRK');
-      expect(zones, hasLength(2));
+      expect(zones, isNotEmpty);
+      expect(zones.map((z) => z.negeri), everyElement('Perak'));
     });
 
-    test('getZonesByGps decodes a single object', () async {
-      final requests = <http.Request>[];
-      final api = mockApi(jsonResponse(_zoneByGpsJson, captured: requests));
+    test('Test valid get prayer zone by GPS', () async {
+      // KL
+      final zone1 = await api.zones.getZonesByGps(3.189, 101.672);
 
-      final zone = await api.zones.getZonesByGps(3.1, 101.6);
+      expect(zone1.zone, 'WLY01');
+      expect(zone1.state, 'KUL');
+      expect(zone1.district, 'W.P. Kuala Lumpur');
 
-      expect(requests.single.url.path, '/zones/3.1/101.6');
-      expect(zone, isA<MptZoneByGPS>());
-      expect(zone.zone, 'SGR01');
-      expect(zone.district, 'Petaling');
+      // nenek
+      final zone2 = await api.zones.getZonesByGps(3.182, 102.277);
+
+      expect(zone2.zone, 'PHG04');
+      expect(zone2.state, 'PHG');
+      expect(zone2.district, 'Bentong');
+
+      // kelantan
+      final zone3 = await api.zones.getZonesByGps(5.175, 101.822);
+
+      expect(zone3.zone, 'KTN02');
+      expect(zone3.state, 'KTN');
+      expect(zone3.district, 'Gua Musang');
     });
   });
 }

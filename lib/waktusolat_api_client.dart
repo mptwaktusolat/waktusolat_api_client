@@ -3,7 +3,7 @@ library;
 
 export 'src/waktusolat_api.dart';
 
-export 'package:chopper/chopper.dart' show ChopperClient, ChopperHttpException;
+export 'package:chopper/chopper.dart' show ChopperHttpException;
 
 // Endpoints
 export 'src/apis/chrono_endpoint.dart';
