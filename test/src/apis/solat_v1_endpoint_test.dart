@@ -36,6 +36,8 @@ void main() {
 
       expect(month, isA<MptSolatV1Month>());
       expect(month.prayerTimes, hasLength(1));
+      expect(month.prayerTimes.single.hijri, isA<HijriDate>());
+      expect(month.prayerTimes.single.hijri.toJson(), '1448-02-17');
       expect(month.zone, 'SGR01');
     });
 

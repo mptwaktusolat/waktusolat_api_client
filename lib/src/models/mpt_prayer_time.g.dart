@@ -8,7 +8,7 @@ part of 'mpt_prayer_time.dart';
 
 MptPrayerTime _$MptPrayerTimeFromJson(Map<String, dynamic> json) =>
     MptPrayerTime(
-      hijri: json['hijri'] as String,
+      hijri: HijriDate.fromJson(json['hijri'] as String),
       date: json['date'] as String,
       day: json['day'] as String,
       imsak: json['imsak'] as String,

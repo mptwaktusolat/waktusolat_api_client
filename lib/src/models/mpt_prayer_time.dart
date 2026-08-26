@@ -1,10 +1,12 @@
 import 'package:json_annotation/json_annotation.dart';
 
+import 'hijri_date.dart';
+
 part 'mpt_prayer_time.g.dart';
 
 @JsonSerializable()
 class MptPrayerTime {
-  final String hijri;
+  final HijriDate hijri;
   final String date;
   final String day;
   final String imsak;
