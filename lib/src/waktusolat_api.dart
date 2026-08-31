@@ -8,7 +8,7 @@ import 'package:waktusolat_api_client/src/apis/solat_v2_endpoint.dart';
 import 'package:waktusolat_api_client/src/apis/zones_endpoint.dart';
 import 'package:waktusolat_api_client/src/converters/json_serializable_converter.dart';
 
-/// Zero-setup entry point: a lazily created [WaktuSolatApi].
+/// Library entry point
 ///
 /// ```dart
 /// final solat = await WaktuSolat.api.solatV2.getPrayerTimeByZone('SGR01');
@@ -18,17 +18,15 @@ class WaktuSolat {
 
   static WaktuSolatApi? _api;
 
-  /// The shared API instance, created on first access.
   static WaktuSolatApi get api => _api ??= WaktuSolatApi();
 
-  /// Disposes the shared instance; the next access to [api] builds a fresh one.
   static void dispose() {
     _api?.dispose();
     _api = null;
   }
 }
 
-/// A Waktu Solat API client, exposing one [ChopperService] per endpoint group.
+/// A Waktu Solat API client
 class WaktuSolatApi {
   /// The public Waktu Solat API host.
   static final Uri defaultBaseUrl = Uri.parse('https://api.waktusolat.app');
