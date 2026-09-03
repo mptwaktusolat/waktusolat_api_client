@@ -61,7 +61,7 @@ The `WaktuSolat` class has been refactored to no longer provide static methods f
 
 ### Other changes
 
-- By default, every request includes the User-Agent `waktusolat.app api client library 2.0.0`.
+- By default, every request includes the User-Agent `waktusolat.app-library/2.0.0`.
   You can override it with `WaktuSolatApi.setUserAgent('my-app/1.0.0')`.
 
 ## 1.0.0
