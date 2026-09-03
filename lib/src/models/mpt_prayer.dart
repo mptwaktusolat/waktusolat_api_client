@@ -9,9 +9,13 @@ class MptPrayer {
   final int day;
   final HijriDate hijri;
   @EpochDateTimeConverter()
+  final DateTime imsak;
+  @EpochDateTimeConverter()
   final DateTime fajr;
   @EpochDateTimeConverter()
   final DateTime syuruk;
+  @EpochDateTimeConverter()
+  final DateTime dhuha;
   @EpochDateTimeConverter()
   final DateTime dhuhr;
   @EpochDateTimeConverter()
@@ -24,8 +28,10 @@ class MptPrayer {
   MptPrayer({
     required this.day,
     required this.hijri,
+    required this.imsak,
     required this.fajr,
     required this.syuruk,
+    required this.dhuha,
     required this.dhuhr,
     required this.asr,
     required this.maghrib,

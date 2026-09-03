@@ -4,7 +4,8 @@ A Dart package for fetching prayer times from the Waktu Solat API (https://api.w
 
 ## Usage
 
-### Basic Usage
+Every endpoint is reached through a service on a `WaktuSolatApi`. `WaktuSolat.api` is a shared
+instance created on first use, so there is nothing to set up:
 
 ```dart
 import 'package:waktusolat_api_client/waktusolat_api_client.dart';
@@ -12,7 +13,7 @@ import 'package:waktusolat_api_client/waktusolat_api_client.dart';
 void main() async {
   try {
     // Get prayer times for a zone in Malaysia (e.g., SGR01)
-    final waktuSolat = await WaktuSolat.getWaktuSolatV2('SGR01');
+    final waktuSolat = await WaktuSolat.api.solatV2.getPrayerTimeByZone('SGR01');
 
     print('Zone: ${waktuSolat.zone}');
     print('Month: ${waktuSolat.month} ${waktuSolat.year}');
@@ -22,22 +23,75 @@ void main() async {
     final firstDay = waktuSolat.prayers.first;
     print('Day ${firstDay.day} prayer times:');
     print('Hijri Date: ${firstDay.hijri}');
-    print('Fajr: ${firstDay.fajrTime}');
-    print('Syuruk: ${firstDay.syurukTime}');
-    print('Dhuhr: ${firstDay.dhuhrTime}');
-    print('Asr: ${firstDay.asrTime}');
-    print('Maghrib: ${firstDay.maghribTime}');
-    print('Isha: ${firstDay.ishaTime}');
-
-  } catch (e) {
-    print('Error: $e');
+    print('Imsak: ${firstDay.imsak}');
+    print('Fajr: ${firstDay.fajr}');
+    print('Syuruk: ${firstDay.syuruk}');
+    print('Dhuha: ${firstDay.dhuha}');
+    print('Dhuhr: ${firstDay.dhuhr}');
+    print('Asr: ${firstDay.asr}');
+    print('Maghrib: ${firstDay.maghrib}');
+    print('Isha: ${firstDay.isha}');
+  } on ChopperHttpException catch (e) {
+    print('Request failed with ${e.response.statusCode}');
   }
 }
 ```
 
+This library contains every endpoint in the [Waktu Solat API](https://api.waktusolat.app/docs). More example below:
+
+```dart
+// Version 1 prayer times
+final month = await WaktuSolat.api.solatV1.getMonthlyPrayerTime('SGR01');
+final day = await WaktuSolat.api.solatV1.getDailyPrayerTime('SGR01', 1);
+
+// Prayer times by coordinates
+final byGps = await WaktuSolat.api.solatV2.getPrayerTimeByGps(3.1, 101.6);
+
+// Zones
+final allZones = await WaktuSolat.api.zones.getAllZones();
+final zone = await WaktuSolat.api.zones.getZonesByGps(3.1, 101.6);
+
+// Server date and time
+final chrono = await WaktuSolat.api.chrono.getChrono();
+
+// The JAKIM prayer timetable, as PDF bytes
+final pdf = await WaktuSolat.api.jadualSolat.getJadualSolat('SGR01');
+```
+
+### Error handling
+
+A method returns the decoded model on success. Anything else — a non-2xx status, or a successful
+response with an empty body — throws `ChopperHttpException`, which carries the whole response:
+
+```dart
+try {
+  await WaktuSolat.api.solatV2.getPrayerTimeByZone('INVALID');
+} on ChopperHttpException catch (e) {
+  print(e.response.statusCode); // 404
+  print(e.response.error);      // the decoded error body
+  print(e.response.headers);
+}
+```
+
+Release the shared instance with `WaktuSolat.dispose()`.
+
+### User-Agent
+
+Every request is sent with the default User-Agent
+`waktusolat.app api client library 2.0.0`. Override it if you want your app to identify itself:
+
+```dart
+WaktuSolatApi.setUserAgent('my-app/1.0.0');
+
+final solat = await WaktuSolat.api.solatV2.getPrayerTimeByZone('SGR01');
+```
+
+The new User-Agent applies to clients created from that point on, including the already-created
+`WaktuSolat.api`. Read the current value back with `WaktuSolatApi.userAgent`.
+
 ### Hijri Date Support
 
-The package includes full support for Hijri dates:
+The package includes support for Hijri dates:
 
 ```dart
 final prayer = waktuSolat.prayers.first;
@@ -51,15 +105,9 @@ print(hijriDate.dMMM()); // "4 Zulhijjah"
 
 ### Zone Codes
 
-This package works with JAKIM zone codes for Malaysia only. Some examples:
+This package works with JAKIM zone codes for Malaysia only.
 
-- `JHR01` - Pulau Aur dan Pulau Pemanggil, Johor
-- `JHR02` - Johor Bahru, Kota Tinggi, Mersing, Kulai
-- `KUL01` - Kuala Lumpur, Putrajaya
-- `SGR01` - Gombak, Petaling, Sepang, Hulu Langat, Hulu Selangor, Shah Alam, Selangor
-- `KDH01` - Kota Setar, Kubang Pasu, Pokok Sena (Daerah Kecil), Kedah
-
-For a complete list of zone codes, refer to the [e-solat JAKIM](https://www.e-solat.gov.my/).
+For a complete list of zone codes, see https://api.waktusolat.app/zones.
 
 ## API Reference
 
@@ -71,4 +119,4 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the [MIT License](LICENSE).

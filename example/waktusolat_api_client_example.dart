@@ -1,4 +1,3 @@
-import 'package:waktusolat_api_client/src/extensions/prayer_time_extension.dart';
 import 'package:waktusolat_api_client/waktusolat_api_client.dart';
 
 void main() async {
@@ -10,12 +9,17 @@ void main() async {
 
   // Example 3: List all available zones for a specific state
   await fetchZonesForSelectedState('prk');
+
+  // Example 4: Handle a failed request
+  await fetchInvalidZone();
+
+  WaktuSolat.dispose();
 }
 
 /// Example 1: Fetching prayer time for current month
 Future<void> fetchPrayerTimesForZone(String zoneCode) async {
   print('Fetching prayer times for $zoneCode...');
-  final waktuSolat = await WaktuSolat.getWaktuSolatV2('SGR01');
+  final waktuSolat = await WaktuSolat.api.solatV2.getPrayerTimeByZone(zoneCode);
 
   print('Zone: ${waktuSolat.zone}');
   print(
@@ -38,19 +42,29 @@ Future<void> fetchPrayerTimesForZone(String zoneCode) async {
 /// Example 2: List all available zones
 Future<void> fetchAllZones() async {
   print('\nFetching all available zones...');
-  final mptZones = await WaktuSolat.getAllZones();
+  final mptZones = await WaktuSolat.api.zones.getAllZones();
 
   print(
     'All zones retrieved: ${mptZones.map((zone) => zone.jakimCode).join(', ')}',
   );
 }
 
-/// Example 3: List all available zones
+/// Example 3: List all available zones for a state
 Future<void> fetchZonesForSelectedState(String state) async {
   print('\nFetching all available zones...');
-  final mptZones = await WaktuSolat.getZoneByState(state);
+  final mptZones = await WaktuSolat.api.zones.getZonesByState(state);
 
   print(
     'Zones under $state retrieved: ${mptZones.map((zone) => zone.jakimCode).join(', ')}',
   );
+}
+
+/// Example 4: A failed request throws [ChopperHttpException]
+Future<void> fetchInvalidZone() async {
+  print('\nFetching an invalid zone...');
+  try {
+    await WaktuSolat.api.solatV2.getPrayerTimeByZone('INVALID');
+  } on ChopperHttpException catch (e) {
+    print('Request failed with ${e.response.statusCode}: ${e.response.error}');
+  }
 }

@@ -24,7 +24,4 @@ class MptZone {
   factory MptZone.fromJson(Map<String, dynamic> json) =>
       _$MptZoneFromJson(json);
   Map<String, dynamic> toJson() => _$MptZoneToJson(this);
-
-  static List<MptZone> fromList(List<dynamic> list) =>
-      list.map((e) => MptZone.fromJson(e as Map<String, dynamic>)).toList();
 }
