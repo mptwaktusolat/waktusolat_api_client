@@ -13,7 +13,7 @@ void main() {
 
       expect(chrono.dayOfMonth, greaterThan(0));
       expect(chrono.dayOfMonth, lessThanOrEqualTo(31));
-      expect(chrono.dayOfWeek, inInclusiveRange(0, 6));
+      expect(chrono.dayOfWeek, inInclusiveRange(1, 7));
       expect(chrono.time24, matches(RegExp(r'^\d{2}:\d{2}:\d{2}$')));
       expect(chrono.timezone, 'Asia/Kuala_Lumpur');
     });
