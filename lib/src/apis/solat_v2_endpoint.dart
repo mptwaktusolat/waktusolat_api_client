@@ -15,7 +15,7 @@ abstract class SolatV2Endpoint extends ChopperService {
     @Query() int? month,
   });
 
-  @GET(path: '/{lat}/{long}')
+  @GET(path: '/gps/{lat}/{long}')
   Future<MPTWaktuSolatV2> getPrayerTimeByGps(
     @Path() double lat,
     @Path() double long, {

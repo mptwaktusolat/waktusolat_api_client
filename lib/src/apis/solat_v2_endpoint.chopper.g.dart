@@ -47,7 +47,7 @@ final class _$SolatV2Endpoint extends SolatV2Endpoint {
     int? year,
     int? month,
   }) async {
-    final Uri $url = Uri.parse('/v2/solat/${lat}/${long}');
+    final Uri $url = Uri.parse('/v2/solat/gps/${lat}/${long}');
     final Map<String, dynamic> $params = <String, dynamic>{
       'year': year,
       'month': month,
